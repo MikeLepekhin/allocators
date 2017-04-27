@@ -93,21 +93,18 @@ private:
     size_t allocSize_;
 
 public:
-    FixedAllocator(): cur_(nullptr), end_(nullptr), allocSize_(1) {}
+    FixedAllocator(): cur_(nullptr), end_(nullptr), allocSize_(1) {} // because else it doesn't work
 
     FixedAllocator(const FixedAllocator& other) = delete;
 
-    FixedAllocator(FixedAllocator&& other) {
-        cur_ = other.cur_;
-        end_ = other.end_;
-        allocSize_ = other.allocSize_;
+    FixedAllocator(FixedAllocator&& other): cur_ = other.cur_, end_ = other.end_, allocSize_ = other.allocSize_ {
         freed_ = std::move(other.freed_);
+        alloced_ = std::move(other.alloced_);
         other.cur_ = other.end_ = nullptr;
         other.allocSize_ = 0;
     }
 
     FixedAllocator& operator=(const FixedAllocator& other) = delete;
-    
 
     FixedAllocator& operator=(FixedAllocator&& other) {
         if (this != &other) {
@@ -163,6 +160,8 @@ public:
 
 
     FastAllocator() = default;
+
+    FastAllocator(FastAllocator&& other) = default;
 
     template<class U>
     FastAllocator(const FastAllocator<U>& other) {}
